@@ -255,3 +255,45 @@ color_edges = np.dstack((edges, edges, edges))
 # Draw the lines on the edge image
 lines_edges = cv2.addWeighted(color_edges, 0.8, line_image, 1, 0) 
 plt.imshow(lines_edges)
+
+
+
+
+####
+
+
+
+def draw_lines_new(img, lines, color=[255, 0, 0], topY=323, bottomY=540 thickness=20):
+    left_points_x = []
+    left_points_y = []
+    right_points_x = []
+    right_points_y = []
+    
+    for line in lines:
+        for x1,y1,x2,y2 in line:
+            slope = (y2 - y1) / (x2 - x1)
+            if slope > 0:
+                right_points_x.append(x1)
+                right_points_x.append(x2)
+                right_points_y.append(y1)
+                right_points_y.append(y2)
+            else:
+                left_points_x.append(x1)
+                left_points_x.append(x2)
+                left_points_y.append(y1)
+                left_points_y.append(y2)
+    
+    (left_m, left_b) = lineParameters = np.polyfit(left_points_x, left_points_y, 1) 
+    (right_m, right_b) = lineParameters = np.polyfit(right_points_x, right_points_y, 1) 
+    
+    left_x_bottom = (bottomY - left_b) / left_m
+    left_x_top = (topY - left_b) / left_m
+
+    right_x_bottom = (bottomY - right_b) / right_m
+    right_x_top = (topY - right_b) / right_m
+    
+    
+    cv2.line(img, (x1, y1), (x2, y2), [255, 0, 0], thickness)
+    #drawLine(img, int(leftBottomAvg), 540, int(leftTopAvg), 323)
+    #drawLine(img, int(rightBottomAvg), 540, int(rightTopAvg), 323)
+
